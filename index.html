@@ -1,0 +1,76 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Biseladores</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1>Registro de Biseladores</h1>
+
+<form id="formBiselador">
+    <input type="text" id="nombres" placeholder="Nombres" required>
+    <input type="text" id="apellidos" placeholder="Apellidos" required>
+    <input type="text" id="cedula" placeholder="Cédula" required>
+
+    <select id="ubicacion">
+        <option value="">Seleccione ubicación</option>
+        <option>Laboratorio</option>
+        <option>Centro</option>
+        <option>Chapinero</option>
+        <option>Medellin</option>
+        <option>Olaya</option>
+        <option>Pereira</option>
+        <option>Barranquilla</option>
+        <option>Manizales</option>
+        <option>Cali</option>
+        <option>Popayan</option>
+        <option>Armenia</option>
+        <option>Duitama</option>
+        <option>Tunja</option>
+        <option>Pasto</option>
+        <option>Yopal</option>
+        <option>Villavicencio</option>
+        <option>Neiva</option>
+        <option>Ibague</option>
+        <option>Cucuta</option>
+    </select>
+
+    <button type="submit">Registrar</button>
+</form>
+
+<hr>
+
+<h2>Búsqueda</h2>
+<input type="text" id="buscarNombre" placeholder="Buscar por nombre">
+<input type="number" id="buscarCodigo" placeholder="Buscar por código">
+<select id="buscarUbicacion">
+    <option value="">Buscar por ubicación</option>
+    <option>LABORATORIO</option>
+    <option>CENTRO</option>
+    <option>CHAPINERO</option>
+    <option>OLAYA</option>
+    <option>MEDELLIN</option>
+    <option>PEREIRA</option>
+    <option>BARRANQUILLA</option>
+    <option>MANIZALES</option>
+    <option>CALI</option>
+    <option>POPAYÁN</option>
+    <option>ARMENIA</option>
+    <option>TUNJA</option>
+    <option>DUITAMA</option>
+    <option>PASTO</option>
+    <option>YOPAL</option>
+    <option>VILLAVICENCIO</option>
+    <option>NEIVA</option>
+</select>
+
+<button onclick="buscar()">Buscar</button>
+
+<div id="resultados"></div>
+
+<!-- Firebase -->
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
