@@ -15,11 +15,11 @@ const firebaseConfig = {
     apiKey: "AIzaSyC2QOb0ssPqIa8_OVoVeKYNUqiq3dSIqw0",
     authDomain: "biseladores.firebaseapp.com",
     projectId: "biseladores",
-    storageBucket: "biseladores.appspot.com",
+    storageBucket: "biseladores.appspot.com", // ✅ CORRECTO
     messagingSenderId: "1011105303379",
-    appId: "1:1011105303379:web:5dd572907bcdb6704f2fa6",
-    measurementId: "G-1SRTL3R1B7"
+    appId: "1:1011105303379:web:5dd572907bcdb6704f2fa6"
 };
+
 
 // 🚀 INICIALIZAR FIREBASE
 const app = initializeApp(firebaseConfig);
@@ -163,4 +163,5 @@ async function cargarBiseladoresIniciales() {
 }
 
 window.cargarBiseladoresIniciales = cargarBiseladoresIniciales;
+
 
