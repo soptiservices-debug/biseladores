@@ -20,10 +20,12 @@ const firebaseConfig = {
     appId: "1:1011105303379:web:5dd572907bcdb6704f2fa6"
 };
 
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
 
-// 🚀 INICIALIZAR FIREBASE
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Inicializar Firestore
+const db = firebase.firestore();
+
 
 // 📌 REFERENCIAS HTML
 const nombres = document.getElementById("nombres");
@@ -163,5 +165,6 @@ async function cargarBiseladoresIniciales() {
 }
 
 window.cargarBiseladoresIniciales = cargarBiseladoresIniciales;
+
 
 
