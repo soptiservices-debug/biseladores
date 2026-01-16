@@ -2,64 +2,71 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Biseladores</title>
+    <title>Optiservices</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="header">
+
+<header class="header">
     <img src="imagen.png" alt="Optiservices Logo" class="logo">
     <h1 class="titulo">Optiservices</h1>
-</div>
-<div class="container">
-    <h1>Registro de Biseladores</h1>
+</header>
 
-    <form id="formBiselador">
-        <input type="text" id="nombres" placeholder="Nombres" required>
-        <input type="text" id="apellidos" placeholder="Apellidos" required>
-        <input type="text" id="cedula" placeholder="Cédula" required>
+<main class="main">
+    <section class="container">
+        <h2>Registro de Biseladores</h2>
 
-        <select id="ubicacion" required>
-            <option value="">Seleccione ubicación</option>
-            <option>LABORATORIO</option>
-            <option>CENTRO</option>
-            <option>CHAPINERO</option>
-            <option>MEDELLIN</option>
-            <option>OLAYA</option>
-            <option>PEREIRA</option>
-            <option>BARRANQUILLA</option>
-            <option>MANIZALES</option>
-            <option>CALI</option>
-            <option>POPAYÁN</option>
-            <option>ARMENIA</option>
-            <option>DUITAMA</option>
-            <option>TUNJA</option>
-            <option>PASTO</option>
-            <option>YOPAL</option>
-            <option>VILLAVICENCIO</option>
-            <option>NEIVA</option>
-            <option>IBAGUE</option>
-            <option>CUCUTA</option>
-        </select>
+        <form id="formBiselador">
+            <input type="text" id="nombres" placeholder="Nombres" required>
+            <input type="text" id="apellidos" placeholder="Apellidos" required>
+            <input type="text" id="cedula" placeholder="Cédula" required>
 
-        <button type="submit">Registrar</button>
-    </form>
-</div>
+            <select id="ubicacion" required>
+                <option value="">Seleccione ubicación</option>
+                <option>LABORATORIO</option>
+                <option>CENTRO</option>
+                <option>CHAPINERO</option>
+                <option>MEDELLIN</option>
+                <option>OLAYA</option>
+                <option>PEREIRA</option>
+                <option>BARRANQUILLA</option>
+                <option>MANIZALES</option>
+                <option>CALI</option>
+                <option>POPAYÁN</option>
+                <option>ARMENIA</option>
+                <option>DUITAMA</option>
+                <option>TUNJA</option>
+                <option>PASTO</option>
+                <option>YOPAL</option>
+                <option>VILLAVICENCIO</option>
+                <option>NEIVA</option>
+                <option>IBAGUE</option>
+                <option>CUCUTA</option>
+            </select>
 
-<div class="container">
-    <h2>Búsqueda</h2>
-    <input type="text" id="buscarNombre" placeholder="Buscar por nombre">
-    <input type="number" id="buscarCodigo" placeholder="Buscar por código">
+            <button type="submit">Registrar</button>
+        </form>
+    </section>
 
-    <button onclick="buscar()">Buscar</button>
-    <button onclick="mostrarTodos()">Mostrar lista completa</button>
+    <section class="container">
+        <h2>Búsqueda</h2>
+        <input type="text" id="buscarNombre" placeholder="Buscar por nombre">
+        <input type="number" id="buscarCodigo" placeholder="Buscar por código">
 
-    <div id="resultados"></div>
-</div>
+        <div class="botones">
+            <button onclick="buscar()">Buscar</button>
+            <button onclick="mostrarTodos()">Mostrar lista completa</button>
+        </div>
 
-<div class="container">
-    <h2>Exportar</h2>
-    <button onclick="exportar()">Exportar a CSV</button>
-</div>
+        <div id="resultados"></div>
+    </section>
+
+    <section class="container">
+        <h2>Exportar</h2>
+        <button onclick="exportar()">Exportar a CSV</button>
+    </section>
+</main>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
