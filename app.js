@@ -14,7 +14,6 @@ firebase.initializeApp(firebaseConfig);
 // 🔥 INICIALIZAR FIRESTORE
 const db = firebase.firestore();
 
-
 // 📌 REFERENCIAS HTML
 const nombres = document.getElementById("nombres");
 const apellidos = document.getElementById("apellidos");
@@ -22,9 +21,12 @@ const cedula = document.getElementById("cedula");
 const ubicacion = document.getElementById("ubicacion");
 const buscarNombre = document.getElementById("buscarNombre");
 const buscarCodigo = document.getElementById("buscarCodigo");
+const resultados = document.getElementById("resultados");
+const btnMostrar = document.querySelector('button[onclick="mostrarTodos()"]');
 
+let listaVisible = false;
 
-// 🔢 GENERAR CÓDIGO INCREMENTAL DESDE 101
+// 🔢 GENERAR CÓDIGO INCREMENTAL
 async function generarCodigo() {
     const snapshot = await db
         .collection("biseladores")
@@ -35,7 +37,6 @@ async function generarCodigo() {
     if (snapshot.empty) return 101;
     return snapshot.docs[0].data().codigo + 1;
 }
-
 
 // 📝 REGISTRAR BISELADOR
 document.getElementById("formBiselador").addEventListener("submit", async (e) => {
@@ -56,82 +57,103 @@ document.getElementById("formBiselador").addEventListener("submit", async (e) =>
     e.target.reset();
 });
 
-
-// 🔍 BUSCAR BISELADORES
+// 🔍 BUSCAR
 async function buscar() {
-    const resultados = document.getElementById("resultados");
-    resultados.innerHTML = "";
+    resultados.innerHTML = "<p>🔎 Buscando...</p>";
+    listaVisible = false;
+    btnMostrar.textContent = "Mostrar lista completa";
+
+    const nombre = buscarNombre.value.trim().toLowerCase();
+    const codigo = buscarCodigo.value.trim();
+
+    if (!nombre && !codigo) {
+        resultados.innerHTML = "<p>⚠️ Escribe un nombre o un código para buscar.</p>";
+        return;
+    }
 
     const snapshot = await db.collection("biseladores").get();
+    resultados.innerHTML = "";
+
+    let encontrados = 0;
 
     snapshot.forEach(doc => {
         const b = doc.data();
 
         const coincideNombre =
-            buscarNombre.value &&
-            (b.nombres.toLowerCase().includes(buscarNombre.value.toLowerCase()) ||
-             b.apellidos.toLowerCase().includes(buscarNombre.value.toLowerCase()));
+            nombre &&
+            (b.nombres.toLowerCase().includes(nombre) ||
+             b.apellidos.toLowerCase().includes(nombre));
 
         const coincideCodigo =
-            buscarCodigo.value && b.codigo == buscarCodigo.value;
+            codigo && b.codigo == codigo;
 
         if (coincideNombre || coincideCodigo) {
-            resultados.innerHTML += `
-                <p>
-                    <strong>${b.nombres} ${b.apellidos}</strong><br>
-                    Código: ${b.codigo}<br>
-                    Cédula: ${b.cedula}<br>
-                    Ubicación: ${b.ubicacion}
-                </p>
-                <hr>
-            `;
+            mostrarResultado(b);
+            encontrados++;
         }
     });
+
+    if (encontrados === 0) {
+        resultados.innerHTML = "<p>❌ No se encontraron resultados.</p>";
+    }
 }
 
 window.buscar = buscar;
 
-
-// 📋 MOSTRAR TODOS LOS BISELADORES
+// 📋 MOSTRAR / OCULTAR LISTA COMPLETA
 async function mostrarTodos() {
-    const resultados = document.getElementById("resultados");
+    if (listaVisible) {
+        resultados.innerHTML = "";
+        listaVisible = false;
+        btnMostrar.textContent = "Mostrar lista completa";
+        return;
+    }
+
+    resultados.innerHTML = "<p>📋 Cargando lista completa...</p>";
+    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
     resultados.innerHTML = "";
 
-    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
-
     snapshot.forEach(doc => {
-        const b = doc.data();
-        resultados.innerHTML += `
-            <p>
-                <strong>${b.nombres} ${b.apellidos}</strong><br>
-                Código: ${b.codigo}<br>
-                Cédula: ${b.cedula}<br>
-                Ubicación: ${b.ubicacion}
-            </p>
-            <hr>
-        `;
+        mostrarResultado(doc.data());
     });
+
+    listaVisible = true;
+    btnMostrar.textContent = "Ocultar lista completa";
 }
 
 window.mostrarTodos = mostrarTodos;
 
+// 🖨️ MOSTRAR RESULTADO EN PANTALLA
+function mostrarResultado(b) {
+    resultados.innerHTML += `
+        <div class="resultado">
+            <strong>${b.nombres} ${b.apellidos}</strong><br>
+            Código: ${b.codigo}<br>
+            Cédula: ${b.cedula}<br>
+            Ubicación: ${b.ubicacion}
+        </div>
+        <hr>
+    `;
+}
 
-// 📤 EXPORTAR BISELADORES A CSV
+// 📤 EXPORTAR A CSV
 async function exportar() {
     const snapshot = await db.collection("biseladores").orderBy("codigo").get();
-    let csv = "nombres,apellidos,cedula,ubicacion,codigo\n";
+
+    let csv = "Nombres,Apellidos,Cédula,Código,Ubicación\n";
 
     snapshot.forEach(doc => {
         const b = doc.data();
-        csv += `${b.nombres},${b.apellidos},${b.cedula},${b.ubicacion},${b.codigo}\n`;
+        csv += `"${b.nombres}","${b.apellidos}","${b.cedula}","${b.codigo}","${b.ubicacion}"\n`;
     });
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "biseladores.csv";
-    a.click();
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "biseladores.csv";
+    link.click();
 }
 
 window.exportar = exportar;
