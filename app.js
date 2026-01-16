@@ -22,10 +22,9 @@ const cedula = document.getElementById("cedula");
 const ubicacion = document.getElementById("ubicacion");
 const buscarNombre = document.getElementById("buscarNombre");
 const buscarCodigo = document.getElementById("buscarCodigo");
-const buscarUbicacion = document.getElementById("buscarUbicacion");
 
 
-// 🔢 GENERAR CÓDIGO INCREMENTAL
+// 🔢 GENERAR CÓDIGO INCREMENTAL DESDE 101
 async function generarCodigo() {
     const snapshot = await db
         .collection("biseladores")
@@ -76,10 +75,7 @@ async function buscar() {
         const coincideCodigo =
             buscarCodigo.value && b.codigo == buscarCodigo.value;
 
-        const coincideUbicacion =
-            buscarUbicacion.value && b.ubicacion === buscarUbicacion.value;
-
-        if (coincideNombre || coincideCodigo || coincideUbicacion) {
+        if (coincideNombre || coincideCodigo) {
             resultados.innerHTML += `
                 <p>
                     <strong>${b.nombres} ${b.apellidos}</strong><br>
@@ -96,4 +92,47 @@ async function buscar() {
 window.buscar = buscar;
 
 
+// 📋 MOSTRAR TODOS LOS BISELADORES
+async function mostrarTodos() {
+    const resultados = document.getElementById("resultados");
+    resultados.innerHTML = "";
+
+    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
+
+    snapshot.forEach(doc => {
+        const b = doc.data();
+        resultados.innerHTML += `
+            <p>
+                <strong>${b.nombres} ${b.apellidos}</strong><br>
+                Código: ${b.codigo}<br>
+                Cédula: ${b.cedula}<br>
+                Ubicación: ${b.ubicacion}
+            </p>
+            <hr>
+        `;
+    });
+}
+
+window.mostrarTodos = mostrarTodos;
+
+
+// 📤 EXPORTAR BISELADORES A CSV
+async function exportar() {
+    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
+    let csv = "nombres,apellidos,cedula,ubicacion,codigo\n";
+
+    snapshot.forEach(doc => {
+        const b = doc.data();
+        csv += `${b.nombres},${b.apellidos},${b.cedula},${b.ubicacion},${b.codigo}\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "biseladores.csv";
+    a.click();
+}
+
+window.exportar = exportar;
 
