@@ -85,6 +85,7 @@ button:hover {
     background: #f0f4ff;
     padding: 10px;
     border-radius: 6px;
+    margin-bottom: 8px;
 }
 
 /* 📱 Responsive */
