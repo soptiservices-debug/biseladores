@@ -66,18 +66,18 @@ document.getElementById("formBiselador").addEventListener("submit", async (e) =>
     e.target.reset();
 });
 
-// 🔍 BUSCAR BISELADORES (ACTIVOS O SIN CAMPO ACTIVO)
+// 🔍 BUSCAR BISELADORES (SOLO ACTIVOS)
 async function buscar() {
     const resultados = document.getElementById("resultados");
     resultados.innerHTML = "";
 
-    const snapshot = await db.collection("biseladores").get();
+    const snapshot = await db
+        .collection("biseladores")
+        .where("activo", "==", true)
+        .get();
 
     snapshot.forEach(doc => {
         const b = doc.data();
-
-        // Mostrar si está activo o si no tiene el campo activo
-        if (b.activo === false) return;
 
         const coincideNombre =
             buscarNombre.value &&
@@ -89,51 +89,76 @@ async function buscar() {
 
         if (coincideNombre || coincideCodigo) {
             resultados.innerHTML += `
-                <p>
+                <p class="resultado">
                     <strong>${b.nombres} ${b.apellidos}</strong><br>
                     Código: ${b.codigo}<br>
                     Cédula: ${b.cedula}<br>
                     Ubicación: ${b.ubicacion}
                 </p>
-                <hr>
             `;
         }
     });
 }
 
-// 📋 MOSTRAR TODOS (ACTIVOS O SIN CAMPO ACTIVO)
+// 📋 MOSTRAR TODOS (SOLO ACTIVOS)
 async function mostrarTodos() {
     const resultados = document.getElementById("resultados");
     resultados.innerHTML = "";
 
-    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
+    const snapshot = await db
+        .collection("biseladores")
+        .where("activo", "==", true)
+        .get();
 
-    snapshot.forEach(doc => {
-        const b = doc.data();
+    // Ordenar manualmente por código
+    const lista = [];
+    snapshot.forEach(doc => lista.push(doc.data()));
+    lista.sort((a, b) => a.codigo - b.codigo);
 
-        if (b.activo === false) return;
-
+    lista.forEach(b => {
         resultados.innerHTML += `
-            <p>
+            <p class="resultado">
                 <strong>${b.nombres} ${b.apellidos}</strong><br>
                 Código: ${b.codigo}<br>
                 Cédula: ${b.cedula}<br>
                 Ubicación: ${b.ubicacion}
             </p>
-            <hr>
         `;
     });
 }
 
-// 📤 EXPORTAR A CSV (ACTIVOS O SIN CAMPO ACTIVO)
+// 🔁 MOSTRAR / OCULTAR LISTA
+let listaVisible = false;
+
+async function toggleLista() {
+    const resultados = document.getElementById("resultados");
+    const boton = document.getElementById("btnToggleLista");
+
+    if (listaVisible) {
+        resultados.innerHTML = "";
+        boton.textContent = "Mostrar lista completa";
+        listaVisible = false;
+    } else {
+        boton.textContent = "Ocultar lista";
+        listaVisible = true;
+        await mostrarTodos();
+    }
+}
+
+// 📤 EXPORTAR A CSV (SOLO ACTIVOS)
 async function exportar() {
-    const snapshot = await db.collection("biseladores").orderBy("codigo").get();
+    const snapshot = await db
+        .collection("biseladores")
+        .where("activo", "==", true)
+        .get();
+
+    const lista = [];
+    snapshot.forEach(doc => lista.push(doc.data()));
+    lista.sort((a, b) => a.codigo - b.codigo);
 
     let csv = "Código,Nombres,Apellidos,Cédula,Ubicación\n";
 
-    snapshot.forEach(doc => {
-        const b = doc.data();
-        if (b.activo === false) return;
+    lista.forEach(b => {
         csv += `${b.codigo},${b.nombres},${b.apellidos},${b.cedula},${b.ubicacion}\n`;
     });
 
@@ -149,5 +174,6 @@ async function exportar() {
 // 🌐 HACER FUNCIONES GLOBALES
 window.buscar = buscar;
 window.mostrarTodos = mostrarTodos;
+window.toggleLista = toggleLista;
 window.exportar = exportar;
 
