@@ -40,7 +40,6 @@ document.getElementById("formBiselador").addEventListener("submit", async (e) =>
 
     const cedulaValor = cedula.value.trim();
 
-    // 🔍 Verificar si ya existe esa cédula
     const existe = await db
         .collection("biseladores")
         .where("cedula", "==", cedulaValor)
@@ -59,14 +58,15 @@ document.getElementById("formBiselador").addEventListener("submit", async (e) =>
         cedula: cedulaValor,
         tipoAsignacion: "Laboratorio",
         ubicacion: ubicacion.value,
-        codigo: codigo
+        codigo: codigo,
+        activo: true
     });
 
     alert("✅ Biselador registrado con código: " + codigo);
     e.target.reset();
 });
 
-// 🔍 BUSCAR BISELADORES
+// 🔍 BUSCAR BISELADORES (ACTIVOS O SIN CAMPO ACTIVO)
 async function buscar() {
     const resultados = document.getElementById("resultados");
     resultados.innerHTML = "";
@@ -75,6 +75,9 @@ async function buscar() {
 
     snapshot.forEach(doc => {
         const b = doc.data();
+
+        // Mostrar si está activo o si no tiene el campo activo
+        if (b.activo === false) return;
 
         const coincideNombre =
             buscarNombre.value &&
@@ -98,7 +101,7 @@ async function buscar() {
     });
 }
 
-// 📋 MOSTRAR TODOS
+// 📋 MOSTRAR TODOS (ACTIVOS O SIN CAMPO ACTIVO)
 async function mostrarTodos() {
     const resultados = document.getElementById("resultados");
     resultados.innerHTML = "";
@@ -107,6 +110,9 @@ async function mostrarTodos() {
 
     snapshot.forEach(doc => {
         const b = doc.data();
+
+        if (b.activo === false) return;
+
         resultados.innerHTML += `
             <p>
                 <strong>${b.nombres} ${b.apellidos}</strong><br>
@@ -119,7 +125,7 @@ async function mostrarTodos() {
     });
 }
 
-// 📤 EXPORTAR A CSV
+// 📤 EXPORTAR A CSV (ACTIVOS O SIN CAMPO ACTIVO)
 async function exportar() {
     const snapshot = await db.collection("biseladores").orderBy("codigo").get();
 
@@ -127,6 +133,7 @@ async function exportar() {
 
     snapshot.forEach(doc => {
         const b = doc.data();
+        if (b.activo === false) return;
         csv += `${b.codigo},${b.nombres},${b.apellidos},${b.cedula},${b.ubicacion}\n`;
     });
 
@@ -135,7 +142,7 @@ async function exportar() {
 
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "biseladores.csv");
+    link.setAttribute("download", "biseladores_activos.csv");
     link.click();
 }
 
